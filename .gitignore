@@ -26,3 +26,6 @@ obj/
 # Temporary files
 *.tmp
 *.log
+
+# Sensory site files
+SensoryJS/
