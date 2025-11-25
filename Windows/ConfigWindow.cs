@@ -48,21 +48,54 @@ public class ConfigWindow : Window, IDisposable
         
         // Scene selector
         ImGui.TextUnformatted("Scene:");
-        var sceneManager = plugin.MainWindow.SceneManager;
-        var currentScene = sceneManager.CurrentSceneName;
-        var currentSceneName = sceneManager.CurrentScene?.Name ?? "Unknown";
-        
-        if (ImGui.BeginCombo("##SceneSelector", currentSceneName))
+        if (plugin.MainWindow != null)
         {
-            foreach (var sceneName in sceneManager.SceneNames)
+            var sceneManager = plugin.MainWindow.sceneManager;
+            var currentScene = sceneManager.CurrentSceneName;
+            var currentSceneName = sceneManager.CurrentScene?.Name ?? "Unknown";
+            
+            if (ImGui.BeginCombo("##SceneSelector", currentSceneName))
             {
-                var displayName = sceneManager.GetSceneDisplayName(sceneName);
-                var isSelected = sceneName == currentScene;
-                
-                if (ImGui.Selectable(displayName, isSelected))
+                foreach (var sceneName in sceneManager.SceneNames)
                 {
-                    sceneManager.SwitchScene(sceneName);
-                    configuration.CurrentScene = sceneName;
+                    var displayName = sceneManager.GetSceneDisplayName(sceneName);
+                    var isSelected = sceneName == currentScene;
+                    
+                    if (ImGui.Selectable(displayName, isSelected))
+                    {
+                        sceneManager.SwitchScene(sceneName);
+                        configuration.CurrentScene = sceneName;
+                        configuration.Save();
+                    }
+                    if (isSelected)
+                    {
+                        ImGui.SetItemDefaultFocus();
+                    }
+                }
+                ImGui.EndCombo();
+            }
+        }
+        
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.Spacing();
+        
+        // Color Theme selector
+        ImGui.TextUnformatted("Color Theme:");
+        var currentTheme = configuration.ColorTheme ?? "pastel";
+        var themes = new[] { "bright", "pastel", "high-contrast", "rainbow" };
+        var themeNames = new[] { "Bright", "Pastel", "High Contrast", "Rainbow" };
+        var currentThemeIndex = Array.IndexOf(themes, currentTheme);
+        if (currentThemeIndex < 0) currentThemeIndex = 1; // Default to pastel
+        
+        if (ImGui.BeginCombo("##ThemeSelector", themeNames[currentThemeIndex]))
+        {
+            for (int i = 0; i < themes.Length; i++)
+            {
+                var isSelected = themes[i] == currentTheme;
+                if (ImGui.Selectable(themeNames[i], isSelected))
+                {
+                    configuration.ColorTheme = themes[i];
                     configuration.Save();
                 }
                 if (isSelected)
@@ -79,7 +112,7 @@ public class ConfigWindow : Window, IDisposable
         
         // Animation Speed
         var speed = configuration.AnimationSpeed;
-        if (ImGui.SliderFloat("Animation Speed", ref speed, 0.1f, 3.0f, "%.1fx"))
+        if (ImGui.SliderFloat("Animation Speed", ref speed, 0.1f, 2.0f, "%.1fx"))
         {
             configuration.AnimationSpeed = speed;
             configuration.Save();

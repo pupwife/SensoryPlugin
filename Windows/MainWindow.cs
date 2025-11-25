@@ -57,7 +57,8 @@ public class MainWindow : Window, IDisposable
             frameTimer.Restart();
         }
         
-        // Update scene
+        // Update scene with animation speed from configuration
+        sceneManager.SetSpeed(plugin.Configuration.AnimationSpeed);
         sceneManager.Update(lastDeltaTime);
         
         // Draw scene in a child window

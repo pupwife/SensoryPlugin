@@ -15,6 +15,7 @@ public class ButtonGridScene : IScene
     private int _gridCols = 8;
     private int _gridRows = 6;
     private Vector2 _canvasSize = new(800f, 600f);
+    private float _speed = 1.0f;
     
     private class Button
     {
@@ -66,6 +67,11 @@ public class ButtonGridScene : IScene
         }
     }
     
+    public void SetSpeed(float speed)
+    {
+        _speed = speed;
+    }
+    
     public void Update(float deltaTime)
     {
         // Smooth glow intensity changes
@@ -73,11 +79,11 @@ public class ButtonGridScene : IScene
         {
             if (btn.Glowing)
             {
-                btn.GlowIntensity = MathF.Min(1.0f, btn.GlowIntensity + deltaTime * 2f);
+                btn.GlowIntensity = MathF.Min(1.0f, btn.GlowIntensity + deltaTime * 2f * _speed);
             }
             else
             {
-                btn.GlowIntensity = MathF.Max(0f, btn.GlowIntensity - deltaTime * 2f);
+                btn.GlowIntensity = MathF.Max(0f, btn.GlowIntensity - deltaTime * 2f * _speed);
             }
         }
     }

@@ -11,6 +11,7 @@ public interface IScene
     void Update(float deltaTime);
     void Draw(ImDrawListPtr drawList, Vector2 canvasPos, Vector2 canvasSize);
     void Cleanup();
+    void SetSpeed(float speed);
 }
 
 

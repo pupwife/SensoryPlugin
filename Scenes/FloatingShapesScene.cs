@@ -51,6 +51,11 @@ public class FloatingShapesScene : IScene
         }
     }
     
+    public void SetSpeed(float speed)
+    {
+        _speed = speed;
+    }
+    
     public void Update(float deltaTime)
     {
         for (int i = 0; i < _shapes.Count; i++)

@@ -25,6 +25,11 @@ public class BreathingCircleScene : IScene
         _time += deltaTime * _speed;
     }
     
+    public void SetSpeed(float speed)
+    {
+        _speed = speed;
+    }
+    
     public void Draw(ImDrawListPtr drawList, Vector2 canvasPos, Vector2 canvasSize)
     {
         var centerX = canvasPos.X + canvasSize.X / 2f;

@@ -13,6 +13,7 @@ public class StarsScene : IScene
     private readonly List<Star> _stars = new();
     private readonly Random _random = new();
     private const int MaxStars = 15;
+    private float _speed = 1.0f;
     
     private class Star
     {
@@ -51,12 +52,17 @@ public class StarsScene : IScene
         });
     }
     
+    public void SetSpeed(float speed)
+    {
+        _speed = speed;
+    }
+    
     public void Update(float deltaTime)
     {
         for (int i = _stars.Count - 1; i >= 0; i--)
         {
             var star = _stars[i];
-            star.Life += deltaTime;
+            star.Life += deltaTime * _speed;
             
             // Fade in
             if (star.Life < 0.5f)

@@ -55,6 +55,14 @@ public class SceneManager
             CurrentScene.Update(deltaTime);
         }
     }
+    
+    public void SetSpeed(float speed)
+    {
+        foreach (var scene in _scenes.Values)
+        {
+            scene.SetSpeed(speed);
+        }
+    }
 }
 
 

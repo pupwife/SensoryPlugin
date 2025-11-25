@@ -11,6 +11,7 @@ public class Configuration : IPluginConfiguration
     public bool IsConfigWindowMovable { get; set; } = true;
     public string CurrentScene { get; set; } = "breathing circle";
     public float AnimationSpeed { get; set; } = 1.0f;
+    public string ColorTheme { get; set; } = "pastel";
 
     // The below exist just to make saving less cumbersome
     public void Save()

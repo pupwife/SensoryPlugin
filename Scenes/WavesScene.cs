@@ -26,6 +26,11 @@ public class WavesScene : IScene
         _time += deltaTime * _speed;
     }
     
+    public void SetSpeed(float speed)
+    {
+        _speed = speed;
+    }
+    
     public void Draw(ImDrawListPtr drawList, Vector2 canvasPos, Vector2 canvasSize)
     {
         var centerY = canvasPos.Y + canvasSize.Y / 2f;
