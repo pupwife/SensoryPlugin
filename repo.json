@@ -3,7 +3,7 @@
     "Author": "pupwife",
     "Name": "Sensory",
     "InternalName": "Sensory",
-    "AssemblyVersion": "0.0.0.1",
+      "AssemblyVersion": "0.0.0.3",
     "Punchline": "Finally, you'll enjoy waiting in queue :3c",
     "Description": "A calming Baby Sensory plugin with Cocomelon-style visuals. Use /sensory to open the main window.",
     "ApplicableVersion": "any",
@@ -22,7 +22,7 @@
     "DownloadLinkTesting": "https://github.com/pupwife/SensoryPlugin/releases/latest/download/Sensory.zip",
     "RepoUrl": "https://github.com/pupwife/SensoryPlugin",
     "IconUrl": "https://raw.githubusercontent.com/pupwife/SensoryPlugin/master/images/icon.png",
-    "LastUpdate": "1732560000"
+    "LastUpdate": "1764101409"
   }
 ]
 
