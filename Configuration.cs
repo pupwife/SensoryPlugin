@@ -1,4 +1,4 @@
-﻿using Dalamud.Configuration;
+using Dalamud.Configuration;
 using System;
 
 namespace Sensory;
@@ -18,3 +18,4 @@ public class Configuration : IPluginConfiguration
         Plugin.PluginInterface.SavePluginConfig(this);
     }
 }
+

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
@@ -60,3 +60,4 @@ public class ConfigWindow : Window, IDisposable
         }
     }
 }
+
