@@ -1,0 +1,13 @@
+{
+  "Author": "pupwife",
+  "Name": "Sensory",
+  "Punchline": "Baby Sensory, Cocomelon-esque visuals for FFXIV.",
+  "Description": "A calming Baby Sensory plugin with Cocomelon-style visuals. Use /sensory to open the main window.",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "sensory",
+    "baby",
+    "visual",
+    "calming"
+  ]
+}
