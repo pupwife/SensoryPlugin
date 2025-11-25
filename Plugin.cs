@@ -18,6 +18,7 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IPluginLog Log { get; private set; } = null!;
 
     private const string CommandName = "/sensory";
+    private const string ConfigCommandName = "/sensoryconfig";
 
     public Configuration Configuration { get; init; }
 
@@ -38,6 +39,11 @@ public sealed class Plugin : IDalamudPlugin
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
             HelpMessage = "Open the Baby Sensory visual window"
+        });
+        
+        CommandManager.AddHandler(ConfigCommandName, new CommandInfo(OnConfigCommand)
+        {
+            HelpMessage = "Open the Sensory configuration window"
         });
 
         // Tell the UI system that we want our windows to be drawn throught he window system
@@ -69,12 +75,19 @@ public sealed class Plugin : IDalamudPlugin
         MainWindow.Dispose();
 
         CommandManager.RemoveHandler(CommandName);
+        CommandManager.RemoveHandler(ConfigCommandName);
     }
 
     private void OnCommand(string command, string args)
     {
         // In response to the slash command, toggle the display status of our main ui
         MainWindow.Toggle();
+    }
+    
+    private void OnConfigCommand(string command, string args)
+    {
+        // Open the configuration window
+        ConfigWindow.Toggle();
     }
     
     public void ToggleConfigUi() => ConfigWindow.Toggle();

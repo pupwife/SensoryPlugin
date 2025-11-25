@@ -43,7 +43,8 @@ Note that you only need to add it to the Dev Plugin Locations once (Step 1); it 
 ## Usage
 
 * Use `/sensory` in chat or `sensory` in the Dalamud Console to toggle the main visual window.
-* Access the configuration window through the Plugin Installer (`/xlplugins`) by clicking the gear icon next to the Sensory plugin.
+* Use `/sensoryconfig` in chat or `sensoryconfig` in the Dalamud Console to open the configuration window.
+* You can also access the configuration window through the Plugin Installer (`/xlplugins`) by clicking the gear icon next to the Sensory plugin.
 
 ## Development
 

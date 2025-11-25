@@ -11,7 +11,7 @@ namespace Sensory.Windows;
 public class MainWindow : Window, IDisposable
 {
     private readonly Plugin plugin;
-    private readonly SceneManager sceneManager;
+    public readonly SceneManager sceneManager;
     private System.Diagnostics.Stopwatch? frameTimer;
     private float lastDeltaTime = 0.016f; // Default 60fps
 
@@ -28,15 +28,16 @@ public class MainWindow : Window, IDisposable
         this.sceneManager = new SceneManager();
         
         // Register all scenes
-        sceneManager.RegisterScene(new PendulumScene());
         sceneManager.RegisterScene(new BreathingCircleScene());
         sceneManager.RegisterScene(new FloatingShapesScene());
         sceneManager.RegisterScene(new StarsScene());
         sceneManager.RegisterScene(new SpiralScene());
         sceneManager.RegisterScene(new WavesScene());
+        sceneManager.RegisterScene(new ButtonGridScene());
         
-        // Initialize first scene
-        sceneManager.SwitchScene("pendulum");
+        // Initialize first scene from configuration
+        var defaultScene = plugin.Configuration.CurrentScene ?? "breathing circle";
+        sceneManager.SwitchScene(defaultScene);
         
         frameTimer = System.Diagnostics.Stopwatch.StartNew();
     }
@@ -58,27 +59,6 @@ public class MainWindow : Window, IDisposable
         
         // Update scene
         sceneManager.Update(lastDeltaTime);
-        
-        // Scene selector
-        var currentScene = sceneManager.CurrentSceneName;
-        if (ImGui.BeginCombo("Scene", sceneManager.CurrentScene?.Name ?? "Unknown"))
-        {
-            foreach (var sceneName in sceneManager.SceneNames)
-            {
-                var isSelected = sceneName == currentScene;
-                if (ImGui.Selectable(sceneName, isSelected))
-                {
-                    sceneManager.SwitchScene(sceneName);
-                }
-                if (isSelected)
-                {
-                    ImGui.SetItemDefaultFocus();
-                }
-            }
-            ImGui.EndCombo();
-        }
-        
-        ImGui.Spacing();
         
         // Draw scene in a child window
         var canvasSize = ImGui.GetContentRegionAvail();
@@ -127,14 +107,22 @@ public class MainWindow : Window, IDisposable
                     
                     drawList.PopClipRect();
                 }
+                
+                // Handle clicks for ButtonGridScene (outside the clip rect)
+                if (sceneManager.CurrentScene is ButtonGridScene buttonGridScene)
+                {
+                    if (ImGui.IsWindowHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+                    {
+                        var mousePos = ImGui.GetMousePos();
+                        // Check if click is within canvas bounds
+                        if (mousePos.X >= actualCanvasPos.X && mousePos.X <= actualCanvasPos.X + actualCanvasSize.X &&
+                            mousePos.Y >= actualCanvasPos.Y && mousePos.Y <= actualCanvasPos.Y + actualCanvasSize.Y)
+                        {
+                            buttonGridScene.HandleClick(mousePos, actualCanvasPos, actualCanvasSize);
+                        }
+                    }
+                }
             }
-        }
-        
-        // Settings button
-        ImGui.Spacing();
-        if (ImGui.Button("Settings"))
-        {
-            plugin.ToggleConfigUi();
         }
     }
 }

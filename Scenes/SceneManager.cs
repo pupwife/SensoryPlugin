@@ -15,6 +15,16 @@ public class SceneManager
     
     public IEnumerable<string> SceneNames => _scenes.Keys;
     
+    public string GetSceneDisplayName(string sceneName)
+    {
+        var lowerName = sceneName.ToLower();
+        if (_scenes.TryGetValue(lowerName, out var scene))
+        {
+            return scene.Name;
+        }
+        return sceneName;
+    }
+    
     public void RegisterScene(IScene scene)
     {
         _scenes[scene.Name.ToLower()] = scene;
