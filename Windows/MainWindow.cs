@@ -18,9 +18,12 @@ public class MainWindow : Window, IDisposable
     public MainWindow(Plugin plugin)
         : base("Baby Sensory##SensoryMainWindow", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
+        // Make window resizable
+        Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
+        
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(800, 600),
+            MinimumSize = new Vector2(400, 300),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -74,9 +77,9 @@ public class MainWindow : Window, IDisposable
             frameTimer.Restart();
         }
         
-        // Update scene with animation speed and theme from configuration
+        // Update scene with animation speed from configuration
+        // Note: SetTheme is only called when theme changes in ConfigWindow, not every frame
         sceneManager.SetSpeed(plugin.Configuration.AnimationSpeed);
-        sceneManager.SetTheme(plugin.Configuration.ColorTheme);
         sceneManager.Update(lastDeltaTime);
         
         // Draw scene in a child window

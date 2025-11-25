@@ -16,6 +16,7 @@ public class ButtonGridScene : IScene
     private int _gridRows = 6;
     private Vector2 _canvasSize = new(800f, 600f);
     private float _speed = 1.0f;
+    private float _time = 0f;
     
     private class Button
     {
@@ -71,15 +72,20 @@ public class ButtonGridScene : IScene
     {
         _currentTheme = themeName;
         UpdateThemeColors();
-        // Update existing buttons' colors
-        foreach (var btn in _buttons)
+        // Only update colors if not rainbow theme (rainbow will cycle in Draw)
+        if (_currentTheme != "rainbow")
         {
-            btn.Color = _themeColors[_random.Next(_themeColors.Length)];
+            // Update existing buttons' colors
+            foreach (var btn in _buttons)
+            {
+                btn.Color = _themeColors[_random.Next(_themeColors.Length)];
+            }
         }
     }
     
     public void Update(float deltaTime)
     {
+        _time += deltaTime;
         // Smooth glow intensity changes
         foreach (var btn in _buttons)
         {
@@ -109,11 +115,28 @@ public class ButtonGridScene : IScene
             var pos = canvasPos + btn.Position;
             var halfSize = btn.Size / 2f;
             
+            // Get color - use rainbow cycling for rainbow theme
+            Vector4 buttonColor;
+            if (_currentTheme == "rainbow" && btn.Glowing)
+            {
+                // Each button cycles through rainbow based on its position and time
+                var btnTime = _time + btn.Position.X * 0.001f + btn.Position.Y * 0.001f;
+                buttonColor = ColorTheme.GetRainbowColor(btnTime, 0.1f);
+            }
+            else if (btn.Glowing)
+            {
+                buttonColor = btn.Color;
+            }
+            else
+            {
+                buttonColor = new Vector4(0.27f, 0.27f, 0.27f, 1.0f);
+            }
+            
             // Draw glow effect
             if (btn.Glowing && btn.GlowIntensity > 0)
             {
                 var glowSize = btn.GlowIntensity * 15f;
-                var glowColor = new Vector4(btn.Color.X, btn.Color.Y, btn.Color.Z, btn.GlowIntensity * 0.3f);
+                var glowColor = new Vector4(buttonColor.X, buttonColor.Y, buttonColor.Z, btn.GlowIntensity * 0.3f);
                 var glowImColor = PastelColors.ToImGuiColor(glowColor);
                 drawList.AddRectFilled(
                     pos - halfSize - new Vector2(glowSize),
@@ -123,7 +146,6 @@ public class ButtonGridScene : IScene
             }
             
             // Button body
-            var buttonColor = btn.Glowing ? btn.Color : new Vector4(0.27f, 0.27f, 0.27f, 1.0f);
             var buttonImColor = PastelColors.ToImGuiColor(buttonColor);
             drawList.AddRectFilled(
                 pos - halfSize,

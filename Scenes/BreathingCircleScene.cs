@@ -11,8 +11,8 @@ public class BreathingCircleScene : IScene
     
     private float _time = 0f;
     private float _speed = 1.0f;
-    private float _minSize = 50f;
-    private float _maxSize = 200f;
+    private float _minSize = 0.08f; // Relative to canvas (8% of smaller dimension)
+    private float _maxSize = 0.3f;  // Relative to canvas (30% of smaller dimension)
     private Vector4 _color;
     private string _currentTheme = "pastel";
     
@@ -49,16 +49,32 @@ public class BreathingCircleScene : IScene
         var centerX = canvasPos.X + canvasSize.X / 2f;
         var centerY = canvasPos.Y + canvasSize.Y / 2f;
         
+        // Scale sizes relative to canvas
+        var baseSize = MathF.Min(canvasSize.X, canvasSize.Y);
+        var minSize = _minSize * baseSize;
+        var maxSize = _maxSize * baseSize;
+        
         // Breathing animation (sine wave)
         var breathPhase = (MathF.Sin(_time * 2f) + 1f) / 2f; // 0 to 1
-        var size = _minSize + (_maxSize - _minSize) * breathPhase;
+        var size = minSize + (maxSize - minSize) * breathPhase;
+        
+        // Get color - use rainbow cycling for rainbow theme, otherwise use static color
+        Vector4 currentColor;
+        if (_currentTheme == "rainbow")
+        {
+            currentColor = ColorTheme.GetRainbowColor(_time, 0.1f);
+        }
+        else
+        {
+            currentColor = _color;
+        }
         
         // Draw glow effect (multiple circles for glow)
-        var glowColor = PastelColors.ToImGuiColor(new Vector4(_color.X, _color.Y, _color.Z, 0.3f));
+        var glowColor = PastelColors.ToImGuiColor(new Vector4(currentColor.X, currentColor.Y, currentColor.Z, 0.3f));
         drawList.AddCircleFilled(new Vector2(centerX, centerY), size * 1.5f, glowColor);
         
         // Main circle
-        var mainColor = PastelColors.ToImGuiColor(_color);
+        var mainColor = PastelColors.ToImGuiColor(currentColor);
         drawList.AddCircleFilled(new Vector2(centerX, centerY), size, mainColor);
         
         // Inner highlight

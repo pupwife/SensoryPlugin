@@ -15,6 +15,7 @@ public class StarsScene : IScene
     private int _maxStars = 15;
     private float _speed = 1.0f;
     private string _currentTheme = "pastel";
+    private float _time = 0f;
     
     private class Star
     {
@@ -61,10 +62,14 @@ public class StarsScene : IScene
     public void SetTheme(string themeName)
     {
         _currentTheme = themeName;
-        // Update existing stars' colors
-        foreach (var star in _stars)
+        // Only update colors if not rainbow theme (rainbow will cycle in Draw)
+        if (_currentTheme != "rainbow")
         {
-            star.Color = ColorTheme.GetRandomColor(_currentTheme, _random);
+            // Update existing stars' colors
+            foreach (var star in _stars)
+            {
+                star.Color = ColorTheme.GetRandomColor(_currentTheme, _random);
+            }
         }
     }
     
@@ -86,6 +91,7 @@ public class StarsScene : IScene
     
     public void Update(float deltaTime)
     {
+        _time += deltaTime;
         for (int i = _stars.Count - 1; i >= 0; i--)
         {
             var star = _stars[i];
@@ -127,13 +133,26 @@ public class StarsScene : IScene
         {
             var pos = canvasPos + star.Position;
             
+            // Get color - use rainbow cycling for rainbow theme
+            Vector4 color;
+            if (_currentTheme == "rainbow")
+            {
+                // Each star cycles through rainbow based on its position and time
+                var starTime = _time + star.Position.X * 0.001f + star.Position.Y * 0.001f;
+                color = ColorTheme.GetRainbowColor(starTime, 0.1f);
+            }
+            else
+            {
+                color = star.Color;
+            }
+            
             // Draw glow effect
-            var glowColor = new Vector4(star.Color.X, star.Color.Y, star.Color.Z, star.GlowIntensity * 0.5f);
+            var glowColor = new Vector4(color.X, color.Y, color.Z, star.GlowIntensity * 0.5f);
             var glowImColor = PastelColors.ToImGuiColor(glowColor);
             drawList.AddCircleFilled(pos, star.Size * 3f, glowImColor);
             
             // Star center
-            var starColor = new Vector4(star.Color.X, star.Color.Y, star.Color.Z, star.GlowIntensity);
+            var starColor = new Vector4(color.X, color.Y, color.Z, star.GlowIntensity);
             var starImColor = PastelColors.ToImGuiColor(starColor);
             drawList.AddCircleFilled(pos, star.Size, starImColor);
         }

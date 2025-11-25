@@ -88,5 +88,30 @@ public static class ColorTheme
         var colors = GetThemeColors(themeName);
         return colors[index % colors.Length];
     }
+    
+    // Get rainbow color that cycles slowly based on time (for rainbow theme only)
+    // time should be in seconds, cycleSpeed controls how fast it cycles (default 0.1 = 10 seconds per full cycle)
+    public static Vector4 GetRainbowColor(float time, float cycleSpeed = 0.1f)
+    {
+        var colors = GetThemeColors("rainbow");
+        var cycleTime = time * cycleSpeed;
+        var normalizedTime = cycleTime - MathF.Floor(cycleTime); // 0 to 1
+        
+        // Map normalized time to color index with smooth interpolation
+        var colorIndex = normalizedTime * colors.Length;
+        var index1 = (int)MathF.Floor(colorIndex) % colors.Length;
+        var index2 = (index1 + 1) % colors.Length;
+        var t = colorIndex - MathF.Floor(colorIndex);
+        
+        // Interpolate between two colors
+        var color1 = colors[index1];
+        var color2 = colors[index2];
+        return new Vector4(
+            color1.X + (color2.X - color1.X) * t,
+            color1.Y + (color2.Y - color1.Y) * t,
+            color1.Z + (color2.Z - color1.Z) * t,
+            1.0f
+        );
+    }
 }
 

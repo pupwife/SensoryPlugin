@@ -15,6 +15,7 @@ public class FloatingShapesScene : IScene
     private float _speed = 1.0f;
     private int _shapeCount = 30;
     private string _currentTheme = "pastel";
+    private float _time = 0f;
     
     private class Shape
     {
@@ -32,6 +33,10 @@ public class FloatingShapesScene : IScene
     public void Initialize()
     {
         _shapes.Clear();
+        var baseSize = MathF.Min(_canvasSize.X, _canvasSize.Y);
+        var minShapeSize = baseSize * 0.02f; // 2% of smaller dimension
+        var maxShapeSize = baseSize * 0.06f; // 6% of smaller dimension
+        
         for (int i = 0; i < _shapeCount; i++)
         {
             _shapes.Add(new Shape
@@ -44,7 +49,7 @@ public class FloatingShapesScene : IScene
                     (_random.NextSingle() - 0.5f) * 2f,
                     (_random.NextSingle() - 0.5f) * 2f
                 ),
-                Size = 15f + _random.NextSingle() * 40f,
+                Size = minShapeSize + _random.NextSingle() * (maxShapeSize - minShapeSize),
                 Rotation = _random.NextSingle() * MathF.PI * 2f,
                 RotationSpeed = (_random.NextSingle() - 0.5f) * 0.02f,
                 Color = ColorTheme.GetRandomColor(_currentTheme, _random),
@@ -69,15 +74,20 @@ public class FloatingShapesScene : IScene
     public void SetTheme(string themeName)
     {
         _currentTheme = themeName;
-        // Update existing shapes' colors
-        foreach (var shape in _shapes)
+        // Only update colors if not rainbow theme (rainbow will cycle in Draw)
+        if (_currentTheme != "rainbow")
         {
-            shape.Color = ColorTheme.GetRandomColor(_currentTheme, _random);
+            // Update existing shapes' colors
+            foreach (var shape in _shapes)
+            {
+                shape.Color = ColorTheme.GetRandomColor(_currentTheme, _random);
+            }
         }
     }
     
     public void Update(float deltaTime)
     {
+        _time += deltaTime;
         for (int i = 0; i < _shapes.Count; i++)
         {
             var shape = _shapes[i];
@@ -97,15 +107,39 @@ public class FloatingShapesScene : IScene
     
     public void Draw(ImDrawListPtr drawList, Vector2 canvasPos, Vector2 canvasSize)
     {
-        // Update canvas size if it changed
+        // Update canvas size if it changed - rescale shapes if needed
         if (_canvasSize != canvasSize)
         {
+            var oldBaseSize = MathF.Min(_canvasSize.X, _canvasSize.Y);
+            var newBaseSize = MathF.Min(canvasSize.X, canvasSize.Y);
+            var scaleFactor = newBaseSize / oldBaseSize;
+            
+            // Scale all shapes to new canvas size
+            foreach (var shape in _shapes)
+            {
+                shape.Position.X = (shape.Position.X / _canvasSize.X) * canvasSize.X;
+                shape.Position.Y = (shape.Position.Y / _canvasSize.Y) * canvasSize.Y;
+                shape.Size *= scaleFactor;
+            }
+            
             _canvasSize = canvasSize;
         }
         
         foreach (var shape in _shapes)
         {
-            var color = new Vector4(shape.Color.X, shape.Color.Y, shape.Color.Z, shape.Alpha);
+            // Get color - use rainbow cycling for rainbow theme
+            Vector4 color;
+            if (_currentTheme == "rainbow")
+            {
+                // Each shape cycles through rainbow based on its position and time
+                var shapeTime = _time + shape.Position.X * 0.001f + shape.Position.Y * 0.001f;
+                color = ColorTheme.GetRainbowColor(shapeTime, 0.1f);
+                color.W = shape.Alpha; // Preserve alpha
+            }
+            else
+            {
+                color = new Vector4(shape.Color.X, shape.Color.Y, shape.Color.Z, shape.Alpha);
+            }
             var imColor = PastelColors.ToImGuiColor(color);
             
             var pos = canvasPos + shape.Position;

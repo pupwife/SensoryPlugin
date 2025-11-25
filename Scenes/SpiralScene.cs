@@ -61,7 +61,18 @@ public class SpiralScene : IScene
         for (int s = 0; s < _spiralCount; s++)
         {
             var spiralRotation = _rotation + (s / (float)_spiralCount) * MathF.PI * 2f;
-            var color = s % 2 == 0 ? _primaryColor : _secondaryColor;
+            
+            // Get color - use rainbow cycling for rainbow theme
+            Vector4 color;
+            if (_currentTheme == "rainbow")
+            {
+                // Each spiral cycles through rainbow with a slight offset
+                color = ColorTheme.GetRainbowColor(_rotation * 0.5f + s * 0.3f, 0.1f);
+            }
+            else
+            {
+                color = s % 2 == 0 ? _primaryColor : _secondaryColor;
+            }
             var imColor = PastelColors.ToImGuiColor(color);
             
             const int turns = 8;
