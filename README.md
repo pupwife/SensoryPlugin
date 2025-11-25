@@ -30,7 +30,21 @@ Sensory requires the following to be installed and configured:
 
 ## Installation
 
+### Easy Method (Recommended)
+
+1. Open Dalamud Plugin Installer (`/xlplugins` in chat or `xlplugins` in console)
+2. Go to **Settings** → **Experimental** → **Custom Plugin Repositories**
+3. Click **Add** and paste this URL:
+   ```
+   https://raw.githubusercontent.com/pupwife/SensoryPlugin/master/repo.json
+   ```
+4. Click **Save** and return to the **Available Plugins** tab
+5. Search for "Sensory" and click **Install**
+6. The plugin will automatically update when new versions are released!
+
 ### For Development
+
+If you want to build from source:
 
 1. Launch the game and use `/xlsettings` in chat or `xlsettings` in the Dalamud Console to open up the Dalamud settings.
    * In here, go to `Experimental`, and add the full path to the `Sensory.dll` to the list of Dev Plugin Locations.
