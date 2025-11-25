@@ -40,15 +40,18 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        // Can't ref a property, so use a local copy
-        var configValue = configuration.SomePropertyToBeSavedAndWithADefault;
-        if (ImGui.Checkbox("Random Config Bool", ref configValue))
+        ImGui.TextUnformatted("Sensory Plugin Settings");
+        ImGui.Spacing();
+        
+        var speed = configuration.AnimationSpeed;
+        if (ImGui.SliderFloat("Animation Speed", ref speed, 0.1f, 3.0f, "%.1fx"))
         {
-            configuration.SomePropertyToBeSavedAndWithADefault = configValue;
-            // Can save immediately on change if you don't want to provide a "Save and Close" button
+            configuration.AnimationSpeed = speed;
             configuration.Save();
         }
-
+        
+        ImGui.Spacing();
+        
         var movable = configuration.IsConfigWindowMovable;
         if (ImGui.Checkbox("Movable Config Window", ref movable))
         {
