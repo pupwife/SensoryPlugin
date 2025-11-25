@@ -12,6 +12,7 @@ public interface IScene
     void Draw(ImDrawListPtr drawList, Vector2 canvasPos, Vector2 canvasSize);
     void Cleanup();
     void SetSpeed(float speed);
+    void SetTheme(string themeName);
 }
 
 

@@ -63,6 +63,14 @@ public class SceneManager
             scene.SetSpeed(speed);
         }
     }
+    
+    public void SetTheme(string themeName)
+    {
+        foreach (var scene in _scenes.Values)
+        {
+            scene.SetTheme(themeName);
+        }
+    }
 }
 
 

@@ -13,6 +13,8 @@ public class FloatingShapesScene : IScene
     private readonly List<Shape> _shapes = new();
     private readonly Random _random = new();
     private float _speed = 1.0f;
+    private int _shapeCount = 30;
+    private string _currentTheme = "pastel";
     
     private class Shape
     {
@@ -30,7 +32,7 @@ public class FloatingShapesScene : IScene
     public void Initialize()
     {
         _shapes.Clear();
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < _shapeCount; i++)
         {
             _shapes.Add(new Shape
             {
@@ -45,15 +47,33 @@ public class FloatingShapesScene : IScene
                 Size = 15f + _random.NextSingle() * 40f,
                 Rotation = _random.NextSingle() * MathF.PI * 2f,
                 RotationSpeed = (_random.NextSingle() - 0.5f) * 0.02f,
-                Color = PastelColors.GetRandomColor(_random),
+                Color = ColorTheme.GetRandomColor(_currentTheme, _random),
                 Alpha = 0.7f + _random.NextSingle() * 0.3f
             });
         }
     }
     
+    public void SetShapeCount(int count)
+    {
+        _shapeCount = Math.Max(5, Math.Min(100, count));
+        Initialize(); // Reinitialize with new count
+    }
+    
+    public int GetShapeCount() => _shapeCount;
+    
     public void SetSpeed(float speed)
     {
         _speed = speed;
+    }
+    
+    public void SetTheme(string themeName)
+    {
+        _currentTheme = themeName;
+        // Update existing shapes' colors
+        foreach (var shape in _shapes)
+        {
+            shape.Color = ColorTheme.GetRandomColor(_currentTheme, _random);
+        }
     }
     
     public void Update(float deltaTime)

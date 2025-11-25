@@ -28,12 +28,29 @@ public class MainWindow : Window, IDisposable
         this.sceneManager = new SceneManager();
         
         // Register all scenes
-        sceneManager.RegisterScene(new BreathingCircleScene());
-        sceneManager.RegisterScene(new FloatingShapesScene());
-        sceneManager.RegisterScene(new StarsScene());
-        sceneManager.RegisterScene(new SpiralScene());
-        sceneManager.RegisterScene(new WavesScene());
-        sceneManager.RegisterScene(new ButtonGridScene());
+        var breathingScene = new BreathingCircleScene();
+        var floatingShapesScene = new FloatingShapesScene();
+        var starsScene = new StarsScene();
+        var spiralScene = new SpiralScene();
+        var wavesScene = new WavesScene();
+        var buttonGridScene = new ButtonGridScene();
+        
+        sceneManager.RegisterScene(breathingScene);
+        sceneManager.RegisterScene(floatingShapesScene);
+        sceneManager.RegisterScene(starsScene);
+        sceneManager.RegisterScene(spiralScene);
+        sceneManager.RegisterScene(wavesScene);
+        sceneManager.RegisterScene(buttonGridScene);
+        
+        // Apply initial settings from configuration
+        sceneManager.SetTheme(plugin.Configuration.ColorTheme ?? "pastel");
+        sceneManager.SetSpeed(plugin.Configuration.AnimationSpeed);
+        
+        // Apply scene-specific settings
+        spiralScene.SetSpiralCount(plugin.Configuration.SpiralCount);
+        wavesScene.SetWaveCount(plugin.Configuration.WaveCount);
+        floatingShapesScene.SetShapeCount(plugin.Configuration.FloatingShapesCount);
+        starsScene.SetMaxStars(plugin.Configuration.StarsCount);
         
         // Initialize first scene from configuration
         var defaultScene = plugin.Configuration.CurrentScene ?? "breathing circle";
@@ -57,8 +74,9 @@ public class MainWindow : Window, IDisposable
             frameTimer.Restart();
         }
         
-        // Update scene with animation speed from configuration
+        // Update scene with animation speed and theme from configuration
         sceneManager.SetSpeed(plugin.Configuration.AnimationSpeed);
+        sceneManager.SetTheme(plugin.Configuration.ColorTheme);
         sceneManager.Update(lastDeltaTime);
         
         // Draw scene in a child window
@@ -86,10 +104,9 @@ public class MainWindow : Window, IDisposable
                 var actualCanvasPos = canvasPos + canvasMin;
                 var actualCanvasSize = canvasMax - canvasMin;
                 
-                // Draw background (pastel mint green)
-                var bgColor = Sensory.Utils.PastelColors.ToImGuiColor(
-                    new Vector4(0.9f, 0.98f, 0.95f, 1.0f)
-                );
+                // Draw background based on theme
+                var themeBg = Sensory.Utils.ColorTheme.GetBackgroundColor(plugin.Configuration.ColorTheme ?? "pastel");
+                var bgColor = Sensory.Utils.PastelColors.ToImGuiColor(themeBg);
                 drawList.AddRectFilled(
                     actualCanvasPos,
                     actualCanvasPos + actualCanvasSize,

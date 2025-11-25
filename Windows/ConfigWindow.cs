@@ -97,6 +97,11 @@ public class ConfigWindow : Window, IDisposable
                 {
                     configuration.ColorTheme = themes[i];
                     configuration.Save();
+                    // Apply theme immediately
+                    if (plugin.MainWindow != null)
+                    {
+                        plugin.MainWindow.sceneManager.SetTheme(themes[i]);
+                    }
                 }
                 if (isSelected)
                 {
@@ -118,6 +123,73 @@ public class ConfigWindow : Window, IDisposable
             configuration.Save();
         }
         
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.Spacing();
+        
+        // Scene-specific settings
+        if (plugin.MainWindow != null)
+        {
+            var sceneManager = plugin.MainWindow.sceneManager;
+            var currentScene = sceneManager.CurrentScene;
+            
+            if (currentScene != null)
+            {
+                ImGui.TextUnformatted("Scene Settings:");
+                ImGui.Spacing();
+                
+                // Spiral Scene settings
+                if (currentScene is SpiralScene spiralScene)
+                {
+                    var spiralCount = configuration.SpiralCount;
+                    if (ImGui.SliderInt("Spiral Count", ref spiralCount, 1, 10))
+                    {
+                        configuration.SpiralCount = spiralCount;
+                        spiralScene.SetSpiralCount(spiralCount);
+                        configuration.Save();
+                    }
+                }
+                
+                // Waves Scene settings
+                if (currentScene is WavesScene wavesScene)
+                {
+                    var waveCount = configuration.WaveCount;
+                    if (ImGui.SliderInt("Wave Count", ref waveCount, 1, 10))
+                    {
+                        configuration.WaveCount = waveCount;
+                        wavesScene.SetWaveCount(waveCount);
+                        configuration.Save();
+                    }
+                }
+                
+                // Floating Shapes Scene settings
+                if (currentScene is FloatingShapesScene floatingShapesScene)
+                {
+                    var shapeCount = configuration.FloatingShapesCount;
+                    if (ImGui.SliderInt("Shape Count", ref shapeCount, 5, 100))
+                    {
+                        configuration.FloatingShapesCount = shapeCount;
+                        floatingShapesScene.SetShapeCount(shapeCount);
+                        configuration.Save();
+                    }
+                }
+                
+                // Stars Scene settings
+                if (currentScene is StarsScene starsScene)
+                {
+                    var starsCount = configuration.StarsCount;
+                    if (ImGui.SliderInt("Star Count", ref starsCount, 5, 50))
+                    {
+                        configuration.StarsCount = starsCount;
+                        starsScene.SetMaxStars(starsCount);
+                        configuration.Save();
+                    }
+                }
+            }
+        }
+        
+        ImGui.Spacing();
+        ImGui.Separator();
         ImGui.Spacing();
         
         // Movable Config Window option

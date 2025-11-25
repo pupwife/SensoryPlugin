@@ -13,11 +13,19 @@ public class BreathingCircleScene : IScene
     private float _speed = 1.0f;
     private float _minSize = 50f;
     private float _maxSize = 200f;
-    private Vector4 _color = PastelColors.SoftPurple;
+    private Vector4 _color;
+    private string _currentTheme = "pastel";
     
     public void Initialize()
     {
         _time = 0f;
+        UpdateThemeColors();
+    }
+    
+    private void UpdateThemeColors()
+    {
+        var colors = ColorTheme.GetThemeColors(_currentTheme);
+        _color = colors[0]; // Use first color from theme
     }
     
     public void Update(float deltaTime)
@@ -28,6 +36,12 @@ public class BreathingCircleScene : IScene
     public void SetSpeed(float speed)
     {
         _speed = speed;
+    }
+    
+    public void SetTheme(string themeName)
+    {
+        _currentTheme = themeName;
+        UpdateThemeColors();
     }
     
     public void Draw(ImDrawListPtr drawList, Vector2 canvasPos, Vector2 canvasSize)

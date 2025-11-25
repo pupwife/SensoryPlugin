@@ -26,22 +26,12 @@ public class ButtonGridScene : IScene
         public float GlowIntensity;
     }
     
-    private readonly Vector4[] _pastelColors = new Vector4[]
-    {
-        PastelColors.SoftPink,
-        PastelColors.MintGreen,
-        PastelColors.SkyBlue,
-        PastelColors.Cream,
-        PastelColors.LightOrange,
-        PastelColors.Lavender,
-        PastelColors.Peach,
-        PastelColors.SoftPurple,
-        new Vector4(0.7f, 0.95f, 0.85f, 1.0f), // Additional mint
-        new Vector4(1.0f, 0.85f, 0.8f, 1.0f)  // Additional peach
-    };
+    private Vector4[] _themeColors = Array.Empty<Vector4>();
+    private string _currentTheme = "pastel";
     
     public void Initialize()
     {
+        UpdateThemeColors();
         _buttons.Clear();
         
         var buttonWidth = _canvasSize.X / _gridCols;
@@ -60,16 +50,32 @@ public class ButtonGridScene : IScene
                     ),
                     Size = new Vector2(buttonWidth * 0.8f, buttonHeight * 0.8f),
                     Glowing = glowing,
-                    Color = _pastelColors[_random.Next(_pastelColors.Length)],
+                    Color = _themeColors[_random.Next(_themeColors.Length)],
                     GlowIntensity = glowing ? 0.8f + _random.NextSingle() * 0.2f : 0f
                 });
             }
         }
     }
     
+    private void UpdateThemeColors()
+    {
+        _themeColors = ColorTheme.GetThemeColors(_currentTheme);
+    }
+    
     public void SetSpeed(float speed)
     {
         _speed = speed;
+    }
+    
+    public void SetTheme(string themeName)
+    {
+        _currentTheme = themeName;
+        UpdateThemeColors();
+        // Update existing buttons' colors
+        foreach (var btn in _buttons)
+        {
+            btn.Color = _themeColors[_random.Next(_themeColors.Length)];
+        }
     }
     
     public void Update(float deltaTime)
@@ -185,7 +191,7 @@ public class ButtonGridScene : IScene
             {
                 if (_random.NextSingle() > 0.7f)
                 {
-                    btn.Color = _pastelColors[_random.Next(_pastelColors.Length)];
+                    btn.Color = _themeColors[_random.Next(_themeColors.Length)];
                 }
             }
         }

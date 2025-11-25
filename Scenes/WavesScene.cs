@@ -13,13 +13,29 @@ public class WavesScene : IScene
     private float _speed = 1.0f;
     private int _waveCount = 3;
     private float _amplitude = 50f;
-    private Vector4 _primaryColor = PastelColors.SoftPurple;
-    private Vector4 _secondaryColor = PastelColors.SoftPink;
+    private Vector4 _primaryColor;
+    private Vector4 _secondaryColor;
+    private string _currentTheme = "pastel";
     
     public void Initialize()
     {
         _time = 0f;
+        UpdateThemeColors();
     }
+    
+    private void UpdateThemeColors()
+    {
+        var colors = ColorTheme.GetThemeColors(_currentTheme);
+        _primaryColor = colors[0];
+        _secondaryColor = colors.Length > 1 ? colors[1] : colors[0];
+    }
+    
+    public void SetWaveCount(int count)
+    {
+        _waveCount = Math.Max(1, Math.Min(10, count));
+    }
+    
+    public int GetWaveCount() => _waveCount;
     
     public void Update(float deltaTime)
     {
@@ -29,6 +45,12 @@ public class WavesScene : IScene
     public void SetSpeed(float speed)
     {
         _speed = speed;
+    }
+    
+    public void SetTheme(string themeName)
+    {
+        _currentTheme = themeName;
+        UpdateThemeColors();
     }
     
     public void Draw(ImDrawListPtr drawList, Vector2 canvasPos, Vector2 canvasSize)

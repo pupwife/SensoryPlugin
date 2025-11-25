@@ -12,8 +12,9 @@ public class StarsScene : IScene
     
     private readonly List<Star> _stars = new();
     private readonly Random _random = new();
-    private const int MaxStars = 15;
+    private int _maxStars = 15;
     private float _speed = 1.0f;
+    private string _currentTheme = "pastel";
     
     private class Star
     {
@@ -28,7 +29,7 @@ public class StarsScene : IScene
     public void Initialize()
     {
         _stars.Clear();
-        for (int i = 0; i < MaxStars; i++)
+        for (int i = 0; i < _maxStars; i++)
         {
             SpawnStar();
         }
@@ -48,7 +49,7 @@ public class StarsScene : IScene
             Life = 0f,
             MaxLife = 2f + _random.NextSingle() * 3f,
             GlowIntensity = 0f,
-            Color = PastelColors.GetRandomColor(_random)
+            Color = ColorTheme.GetRandomColor(_currentTheme, _random)
         });
     }
     
@@ -56,6 +57,32 @@ public class StarsScene : IScene
     {
         _speed = speed;
     }
+    
+    public void SetTheme(string themeName)
+    {
+        _currentTheme = themeName;
+        // Update existing stars' colors
+        foreach (var star in _stars)
+        {
+            star.Color = ColorTheme.GetRandomColor(_currentTheme, _random);
+        }
+    }
+    
+    public void SetMaxStars(int count)
+    {
+        _maxStars = Math.Max(5, Math.Min(50, count));
+        // Adjust current stars to match new max
+        while (_stars.Count > _maxStars)
+        {
+            _stars.RemoveAt(_stars.Count - 1);
+        }
+        while (_stars.Count < _maxStars)
+        {
+            SpawnStar();
+        }
+    }
+    
+    public int GetMaxStars() => _maxStars;
     
     public void Update(float deltaTime)
     {
